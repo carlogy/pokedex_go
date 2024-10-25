@@ -1,8 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func callbackHelp() error {
+func callbackHelp(cfg *config) error {
 
 	availableCommands := getCommands()
 	for _, cmd := range availableCommands {

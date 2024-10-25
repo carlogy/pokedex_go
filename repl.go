@@ -10,27 +10,10 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
-func startRepl() {
-
-	// commands := map[string]cliCommand{
-	// 	"help": {
-	// 		name:        "help",
-	// 		description: "1. Type the name of pokemon you wish to get more details on\n2. Type 'map' to get 20 locations, for more type 'map' again\n3. Type 'mapb' for the previous 20 locations \n4. Enter 'quit' or 'exit' to exit the program",
-	// 		// callback: commandHelp,
-	// 	},
-	// 	"quit": {
-	// 		name:        "quit",
-	// 		description: "Quits the Pokedex",
-	// 		// callback: commandExit,
-	// 	},
-	// 	"map": {
-	// 		name:        "map",
-	// 		description: "displays 20 location areas in the Pokemon world, each subsequent call display 20 more locations.",
-	// 	},
-	// }
+func startRepl(cfg *config) {
 
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -54,35 +37,11 @@ func startRepl() {
 			fmt.Println("Invalid command entered")
 			continue
 		}
+		err := command.callback(cfg)
 
-		command.callback()
-
-		// switch command {
-		// case "help":
-		// 	commands["help"].callback()
-		// case "quit":
-		// 	commands["quit"].callback()
-		// case "exit":
-		// 	commands["quit"].callback()
-		// case "map":
-		// 	var locations pokeAPI.Locations
-
-		// 	// url, err := pokeAPI.NewParsedURL("https://pokeapi.co/api/v2/location/")
-		// 	// if err != nil {
-		// 	// 	fmt.Println("map error: %w", err)
-		// 	// }
-		// 	// fmt.Println(url)
-
-		// 	locations, err := pokeAPI.GetLocations("https://pokeapi.co/api/v2/location/")
-		// 	if err != nil {
-		// 		fmt.Println(err)
-		// 	}
-
-		// 	fmt.Println(locations)
-
-		// default:
-		// 	fmt.Println("Echoing: ", cleanedText)
-		// }
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	}
 
@@ -112,6 +71,11 @@ func getCommands() map[string]cliCommand {
 			name:        "map",
 			description: "Displays 20 location areas in the Pokemon world, each subsequent call display 20 more locations",
 			callback:    callbackMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 location areas in the Pokemon world, each subsequent call displays the previous 20 locations",
+			callback:    callbackMapb,
 		},
 	}
 }

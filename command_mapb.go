@@ -1,11 +1,18 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
-func callbackMap(cfg *config) error {
-	res, err := cfg.pokeapiClient.ListLocationAreas(cfg.nextLocationListURL)
+func callbackMapb(cfg *config) error {
+
+	if cfg.prevLocationListURL == nil {
+
+		return errors.New("Already provided the first page of locations list")
+
+	}
+	res, err := cfg.pokeapiClient.ListLocationAreas(cfg.prevLocationListURL)
 	if err != nil {
 		return err
 	}
