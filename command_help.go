@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func callbackHelp(cfg *config) error {
+func callbackHelp(cfg *config, args ...string) error {
 
 	availableCommands := getCommands()
 	for _, cmd := range availableCommands {
