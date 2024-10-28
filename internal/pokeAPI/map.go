@@ -7,6 +7,41 @@ import (
 	"net/http"
 )
 
+func (c *Client) PokemonDetails(name *string) (Pokemon, error) {
+	endpoint := "/pokemon/"
+	fullURL := baseURL + endpoint
+
+	if name != nil {
+		fullURL = fullURL + *name
+	}
+
+	req, err := http.NewRequest("GET", fullURL, nil)
+	if err != nil {
+		return Pokemon{}, err
+	}
+	res, err := c.httpClient.Do(req)
+	if err != nil {
+		return Pokemon{}, nil
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode > 399 {
+		return Pokemon{}, fmt.Errorf("bad status code: %d", res.StatusCode)
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return Pokemon{}, err
+	}
+
+	pokemonEntry := Pokemon{}
+	if err := json.Unmarshal(body, &pokemonEntry); err != nil {
+		return Pokemon{}, fmt.Errorf("error unmarshalling response body: %w", err)
+	}
+
+	return pokemonEntry, nil
+}
+
 func (c *Client) ListPokemon(name *string) (LocationDetails, error) {
 	endpoint := "/location-area/"
 	fullURL := baseURL + endpoint
