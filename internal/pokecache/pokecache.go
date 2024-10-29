@@ -15,18 +15,18 @@ func NewCache(interval time.Duration) Cache {
 
 func (c *Cache) Add(key string, val []byte) {
 
-	c.mu.Lock()
+	c.Lock()
 	c.cacheEntry[key] = cacheEntry{
 		createdAt: time.Now().UTC(),
 		val:       val,
 	}
-	c.mu.Unlock()
+	c.Unlock()
 }
 
 func (c *Cache) Get(key string) ([]byte, bool) {
-	c.mu.Lock()
+	c.Lock()
 	entry, ok := c.cacheEntry[key]
-	c.mu.Unlock()
+	c.Unlock()
 	return entry.val, ok
 }
 

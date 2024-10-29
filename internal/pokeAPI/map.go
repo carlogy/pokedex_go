@@ -4,8 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 )
+
+func (c *Client) CatchPokemon(pokemon Pokemon) (bool, error) {
+
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	catchRatio := (rand.Float64() * float64(pokemon.BaseExperience)) * 0.33
+
+	if catchRatio >= 70 {
+
+		entry := c.pokedex.Convert(pokemon)
+		c.pokedex.Add(entry)
+		return true, nil
+	}
+	return false, nil
+}
 
 func (c *Client) PokemonDetails(name *string) (Pokemon, error) {
 	endpoint := "/pokemon/"
@@ -13,6 +28,16 @@ func (c *Client) PokemonDetails(name *string) (Pokemon, error) {
 
 	if name != nil {
 		fullURL = fullURL + *name
+	}
+
+	data, ok := c.cache.Get(fullURL)
+	if ok {
+
+		pokemon := Pokemon{}
+		if err := json.Unmarshal(data, &pokemon); err != nil {
+			return Pokemon{}, fmt.Errorf("error unmarshalling cached response body: %w", err)
+		}
+		return pokemon, nil
 	}
 
 	req, err := http.NewRequest("GET", fullURL, nil)
@@ -38,6 +63,8 @@ func (c *Client) PokemonDetails(name *string) (Pokemon, error) {
 	if err := json.Unmarshal(body, &pokemonEntry); err != nil {
 		return Pokemon{}, fmt.Errorf("error unmarshalling response body: %w", err)
 	}
+
+	c.cache.Add(fullURL, body)
 
 	return pokemonEntry, nil
 }

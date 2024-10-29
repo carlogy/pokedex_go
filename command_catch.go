@@ -15,8 +15,16 @@ func callbackCatch(cfg *config, args ...string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Pokemon in Area: ")
-	fmt.Println(res)
 
+	attemptCatch, err := cfg.pokeapiClient.CatchPokemon(res)
+	if err != nil {
+		return err
+	}
+
+	if !attemptCatch {
+		fmt.Printf("%s escaped!\n", res.Name)
+		return nil
+	}
+	fmt.Printf("%s was caught!\n", res.Name)
 	return nil
 }
