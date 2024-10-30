@@ -1,5 +1,7 @@
 package pokeapi
 
+import "fmt"
+
 type Pokedex struct {
 	PokedexEntries map[string]PokemonEntry
 }
@@ -47,4 +49,32 @@ func (pokedex *Pokedex) Convert(pokemon Pokemon) PokemonEntry {
 func (pokedex *Pokedex) Add(pokemon PokemonEntry) {
 
 	pokedex.PokedexEntries[pokemon.name] = pokemon
+}
+
+func (pokedex *Pokedex) Get(name string) (PokemonEntry, bool) {
+
+	pokemon, ok := pokedex.PokedexEntries[name]
+	if !ok {
+		return PokemonEntry{}, ok
+	}
+
+	return pokemon, ok
+
+}
+
+func (p PokemonEntry) String() string {
+
+	pokeString := fmt.Sprintf("Name: %s\nHeight: %d\nWeight: %d\nStats:\n", p.name, p.height, p.weight)
+
+	for _, stat := range p.stats {
+		pokeString += fmt.Sprintf("-%s: %d\n", stat.name, stat.base_stat)
+	}
+
+	pokeString += "Types:\n"
+
+	for _, stat := range p.types {
+		pokeString += fmt.Sprintf("-%s\n", stat)
+	}
+
+	return pokeString
 }

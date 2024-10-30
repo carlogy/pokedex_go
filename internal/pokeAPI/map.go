@@ -8,10 +8,22 @@ import (
 	"net/http"
 )
 
+func (c *Client) Inspect(name string) (string, error) {
+
+	pokemon, ok := c.pokedex.Get(name)
+
+	if !ok {
+		return "", fmt.Errorf("%s not in Pokedex", name)
+	}
+
+	return pokemon.String(), nil
+
+}
+
 func (c *Client) CatchPokemon(pokemon Pokemon) (bool, error) {
 
 	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
-	catchRatio := (rand.Float64() * float64(pokemon.BaseExperience)) * 0.33
+	catchRatio := (rand.Float64() * float64(pokemon.BaseExperience)) * 0.60
 
 	if catchRatio >= 70 {
 

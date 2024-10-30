@@ -18,7 +18,7 @@ func TestAddPokemon(t *testing.T) {
 	c := NewClient(1 * time.Minute)
 
 	pokemon := PokemonEntry{
-		name:   "chardmander",
+		name:   "charmander",
 		height: 6,
 		weight: 85,
 		stats: []statType{
@@ -55,6 +55,34 @@ func TestConvertPokemonResponseToPokedexEntry(t *testing.T) {
 
 	if pokemon.name != pikachu {
 		t.Errorf("%s doesn't match %s", pokemon.name, pikachu)
+	}
+
+}
+
+func TestGetPokemon(t *testing.T) {
+	c := NewClient(1 * time.Minute)
+
+	pokemon := PokemonEntry{
+		name:   "charmander",
+		height: 6,
+		weight: 85,
+		stats: []statType{
+			{
+				name:      "hp",
+				base_stat: 39,
+			}, {
+				name:      "attack",
+				base_stat: 52,
+			},
+		},
+		types: []string{"fire"},
+	}
+
+	c.pokedex.Add(pokemon)
+
+	pEntry, ok := c.pokedex.Get(pokemon.name)
+	if !ok {
+		t.Errorf("%s not in Pokedex", pEntry)
 	}
 
 }
