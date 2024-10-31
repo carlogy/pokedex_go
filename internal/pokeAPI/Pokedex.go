@@ -1,6 +1,9 @@
 package pokeapi
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Pokedex struct {
 	PokedexEntries map[string]PokemonEntry
@@ -60,6 +63,23 @@ func (pokedex *Pokedex) Get(name string) (PokemonEntry, bool) {
 
 	return pokemon, ok
 
+}
+
+func (pokedex *Pokedex) GetEntries(p Pokedex) ([]string, error){
+
+	lengthPokedex := len(p.PokedexEntries)
+
+	if lengthPokedex == 0 {
+		return []string{}, errors.New("pokedex is empty")
+	}
+
+	entries := make([]string, 0, lengthPokedex)
+
+	for i, _ := range p.PokedexEntries{
+		entries = append(entries, i)
+	}
+
+	return entries, nil
 }
 
 func (p PokemonEntry) String() string {

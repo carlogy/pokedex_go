@@ -86,3 +86,34 @@ func TestGetPokemon(t *testing.T) {
 	}
 
 }
+
+func TestGetEntries(t *testing.T) {
+	c := NewClient(1 * time.Minute)
+
+	pokemon := PokemonEntry{
+		name:   "charmander",
+		height: 6,
+		weight: 85,
+		stats: []statType{
+			{
+				name:      "hp",
+				base_stat: 39,
+			}, {
+				name:      "attack",
+				base_stat: 52,
+			},
+		},
+		types: []string{"fire"},
+	}
+
+	c.pokedex.Add(pokemon)
+
+	entries, err := c.pokedex.GetEntries(c.pokedex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(entries) != 1 {
+		t.Errorf("%d does not match expected len: 1", len(entries))
+	}
+}
